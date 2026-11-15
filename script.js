@@ -1,7 +1,5 @@
 const passwordInput = document.getElementById("password");
-const passwordIcon = document.getElementById("eyePass1");
 const confirmPasswordInput = document.getElementById("confirmPassword");
-const confirmPasswordIcon = document.getElementById("eyePass2");
 const firstNameInput = document.getElementById("nombre");
 const lastNameInput = document.getElementById("apellido");
 const ageInput = document.getElementById("edad");
@@ -12,33 +10,8 @@ const emailInput = document.getElementById("email");
 const statusMessage = document.getElementById("statusMessage");
 const statusIcon = document.getElementById("statusIcon");
 const statusText = document.getElementById("statusText");
-const welcomeName = document.getElementById("welcomeName");
-const passwordFields = {
-  password: { input: passwordInput, icon: passwordIcon },
-  confirmPassword: { input: confirmPasswordInput, icon: confirmPasswordIcon }
-};
 
-const togglePasswordVisibility = (inputId, iconId, button) => {
-  const passwordField = passwordFields[inputId];
-
-  if (!passwordField || !passwordField.input || !passwordField.icon || passwordField.icon.id !== iconId || !button) {
-    console.warn("No se encontró el campo de contraseña o su icono.");
-    return;
-  }
-
-  if (passwordField.input.type === "password") {
-    passwordField.input.type = "text";
-    passwordField.icon.textContent = "visibility_off";
-    button.setAttribute("aria-label", "Ocultar contraseña");
-    return;
-  }
-
-  passwordField.input.type = "password";
-  passwordField.icon.textContent = "visibility";
-  button.setAttribute("aria-label", "Mostrar contraseña");
-};
-
-const handleSubmit = (event) => {
+const handleSubmit = async (event) => {
   event.preventDefault();
 
   const registrationElements = [
@@ -72,14 +45,22 @@ const handleSubmit = (event) => {
   const emailRegistrado = emailInput.value.trim();
 
   try {
-    localStorage.setItem("emailRegistrado", emailRegistrado);
-    localStorage.removeItem("registroUsuario");
+    const response = await fetch("/api/registro", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ emailRegistrado })
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.ok) {
+      throw new Error(data.message || "El servidor no pudo completar el registro.");
+    }
   } catch (error) {
-    console.error("No se pudo guardar el perfil en el almacenamiento local.", error);
+    console.error("No se pudo completar el registro con el servidor.", error);
     statusMessage.hidden = false;
     statusMessage.classList.add("is-error");
     statusIcon.textContent = "error";
-    statusText.textContent = "No se pudo guardar el registro. Compruebe la configuración de almacenamiento del navegador.";
+    statusText.textContent = "No se pudo enviar el registro. Compruebe la conexión e inténtelo de nuevo.";
     return;
   }
 
@@ -91,24 +72,6 @@ const handleSubmit = (event) => {
   window.setTimeout(() => {
     window.location.href = "bienvenida.html";
   }, 1000);
-};
-
-const initializeWelcome = () => {
-  if (!welcomeName) {
-    return;
-  }
-
-  try {
-    const emailRegistrado = localStorage.getItem("emailRegistrado");
-
-    if (!emailRegistrado) {
-      return;
-    }
-
-    welcomeName.textContent = `Hola, ${emailRegistrado}. Tu perfil está listo.`;
-  } catch (error) {
-    console.error("No se pudo recuperar el perfil guardado.", error);
-  }
 };
 
 const handleLogout = (event) => {
@@ -125,7 +88,5 @@ const handleLogout = (event) => {
   window.location.href = "index.html";
 };
 
-window.togglePasswordVisibility = togglePasswordVisibility;
 window.handleSubmit = handleSubmit;
 window.handleLogout = handleLogout;
-initializeWelcome();
