@@ -69,18 +69,11 @@ const handleSubmit = (event) => {
     return;
   }
 
-  const profile = {
-    nombre: firstNameInput.value.trim(),
-    apellido: lastNameInput.value.trim(),
-    edad: ageInput.value,
-    fechaNacimiento: birthDateInput.value,
-    genero: genderInput.value,
-    estadoCivil: maritalStatusInput.value,
-    email: emailInput.value.trim()
-  };
+  const emailRegistrado = emailInput.value.trim();
 
   try {
-    localStorage.setItem("registroUsuario", JSON.stringify(profile));
+    localStorage.setItem("emailRegistrado", emailRegistrado);
+    localStorage.removeItem("registroUsuario");
   } catch (error) {
     console.error("No se pudo guardar el perfil en el almacenamiento local.", error);
     statusMessage.hidden = false;
@@ -106,22 +99,33 @@ const initializeWelcome = () => {
   }
 
   try {
-    const savedProfile = localStorage.getItem("registroUsuario");
+    const emailRegistrado = localStorage.getItem("emailRegistrado");
 
-    if (!savedProfile) {
+    if (!emailRegistrado) {
       return;
     }
 
-    const profile = JSON.parse(savedProfile);
-
-    if (profile.nombre) {
-      welcomeName.textContent = `Hola, ${profile.nombre}. Tu perfil está listo.`;
-    }
+    welcomeName.textContent = `Hola, ${emailRegistrado}. Tu perfil está listo.`;
   } catch (error) {
     console.error("No se pudo recuperar el perfil guardado.", error);
   }
 };
 
+const handleLogout = (event) => {
+  event.preventDefault();
+
+  try {
+    localStorage.removeItem("emailRegistrado");
+    localStorage.removeItem("registroUsuario");
+  } catch (error) {
+    console.error("No se pudieron eliminar los datos del registro.", error);
+    return;
+  }
+
+  window.location.href = "index.html";
+};
+
 window.togglePasswordVisibility = togglePasswordVisibility;
 window.handleSubmit = handleSubmit;
+window.handleLogout = handleLogout;
 initializeWelcome();
