@@ -1,39 +1,67 @@
-const togglePasswordVisibility = (inputId, iconId, button) => {
-  const input = document.getElementById(inputId);
-  const icon = document.getElementById(iconId);
+const passwordInput = document.getElementById("password");
+const passwordIcon = document.getElementById("eyePass1");
+const confirmPasswordInput = document.getElementById("confirmPassword");
+const confirmPasswordIcon = document.getElementById("eyePass2");
+const firstNameInput = document.getElementById("nombre");
+const lastNameInput = document.getElementById("apellido");
+const ageInput = document.getElementById("edad");
+const birthDateInput = document.getElementById("fechaNacimiento");
+const genderInput = document.getElementById("genero");
+const maritalStatusInput = document.getElementById("estadoCivil");
+const emailInput = document.getElementById("email");
+const statusMessage = document.getElementById("statusMessage");
+const statusIcon = document.getElementById("statusIcon");
+const statusText = document.getElementById("statusText");
+const welcomeName = document.getElementById("welcomeName");
+const passwordFields = {
+  password: { input: passwordInput, icon: passwordIcon },
+  confirmPassword: { input: confirmPasswordInput, icon: confirmPasswordIcon }
+};
 
-  if (!input || !icon) {
+const togglePasswordVisibility = (inputId, iconId, button) => {
+  const passwordField = passwordFields[inputId];
+
+  if (!passwordField || !passwordField.input || !passwordField.icon || passwordField.icon.id !== iconId || !button) {
     console.warn("No se encontró el campo de contraseña o su icono.");
     return;
   }
 
-  if (input.type === "password") {
-    input.type = "text";
-    icon.textContent = "visibility_off";
+  if (passwordField.input.type === "password") {
+    passwordField.input.type = "text";
+    passwordField.icon.textContent = "visibility_off";
     button.setAttribute("aria-label", "Ocultar contraseña");
     return;
   }
 
-  input.type = "password";
-  icon.textContent = "visibility";
+  passwordField.input.type = "password";
+  passwordField.icon.textContent = "visibility";
   button.setAttribute("aria-label", "Mostrar contraseña");
 };
 
 const handleSubmit = (event) => {
   event.preventDefault();
 
-  const password = document.getElementById("password");
-  const confirmPassword = document.getElementById("confirmPassword");
-  const statusMessage = document.getElementById("statusMessage");
-  const statusIcon = document.getElementById("statusIcon");
-  const statusText = document.getElementById("statusText");
+  const registrationElements = [
+    passwordInput,
+    confirmPasswordInput,
+    firstNameInput,
+    lastNameInput,
+    ageInput,
+    birthDateInput,
+    genderInput,
+    maritalStatusInput,
+    emailInput,
+    statusMessage,
+    statusIcon,
+    statusText
+  ];
 
-  if (!password || !confirmPassword || !statusMessage || !statusIcon || !statusText) {
+  if (registrationElements.some((element) => !element)) {
     console.error("No se pudo completar el registro: faltan elementos del formulario.");
     return;
   }
 
-  if (password.value !== confirmPassword.value) {
+  if (passwordInput.value !== confirmPasswordInput.value) {
     statusMessage.hidden = false;
     statusMessage.classList.add("is-error");
     statusIcon.textContent = "error";
@@ -42,13 +70,13 @@ const handleSubmit = (event) => {
   }
 
   const profile = {
-    nombre: document.getElementById("nombre").value.trim(),
-    apellido: document.getElementById("apellido").value.trim(),
-    edad: document.getElementById("edad").value,
-    fechaNacimiento: document.getElementById("fechaNacimiento").value,
-    genero: document.getElementById("genero").value,
-    estadoCivil: document.getElementById("estadoCivil").value,
-    email: document.getElementById("email").value.trim()
+    nombre: firstNameInput.value.trim(),
+    apellido: lastNameInput.value.trim(),
+    edad: ageInput.value,
+    fechaNacimiento: birthDateInput.value,
+    genero: genderInput.value,
+    estadoCivil: maritalStatusInput.value,
+    email: emailInput.value.trim()
   };
 
   try {
@@ -73,8 +101,6 @@ const handleSubmit = (event) => {
 };
 
 const initializeWelcome = () => {
-  const welcomeName = document.getElementById("welcomeName");
-
   if (!welcomeName) {
     return;
   }
