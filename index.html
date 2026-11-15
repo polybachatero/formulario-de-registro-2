@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#004ac6">
+  <title>Formulario de registro | Aether</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body class="page page-registration">
+  <header class="site-header">
+   
+    <span class="header-caption">PLATAFORMA TECNOLÓGICA</span>
+
+  </header>
+
+  <main class="main-content">
+    <section class="glass-card registration-card" aria-labelledby="registrationTitle">
+      <div class="ambient ambient-top" aria-hidden="true"></div>
+      <div class="ambient ambient-bottom" aria-hidden="true"></div>
+
+      <div class="section-heading">
+        <h1 id="registrationTitle">Formulario de Registro</h1>
+        <p>Complete los campos requeridos para acceder a la plataforma tecnológica</p>
+      </div>
+
+      <form class="registration-form" id="registroForm" onsubmit="handleSubmit(event)">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="nombre"><span class="material-symbols-outlined" aria-hidden="true">person</span>Nombre</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">badge</span>
+              <input id="nombre" name="nombre" autocomplete="given-name" placeholder="Ej. Carlos" required type="text">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="apellido"><span class="material-symbols-outlined" aria-hidden="true">person</span>Apellido</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">badge</span>
+              <input id="apellido" name="apellido" autocomplete="family-name" placeholder="Ej. Mendoza" required type="text">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="edad"><span class="material-symbols-outlined" aria-hidden="true">pin</span>Edad</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">speed</span>
+              <input id="edad" name="edad" min="14" max="120" placeholder="Ej. 28" required type="number">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="fechaNacimiento"><span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>Fecha de Nacimiento</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">event</span>
+              <input id="fechaNacimiento" name="fechaNacimiento" autocomplete="bday" required type="date">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="genero"><span class="material-symbols-outlined" aria-hidden="true">wc</span>Género</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">group</span>
+              <select id="genero" name="genero" required>
+                <option disabled selected value="">Seleccionar género...</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+                <option value="otro">Otro</option>
+                <option value="no-decir">Prefiero no decir</option>
+              </select>
+              <span class="material-symbols-outlined select-arrow" aria-hidden="true">expand_more</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="estadoCivil"><span class="material-symbols-outlined" aria-hidden="true">favorite</span>Estado Civil</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">diversity_3</span>
+              <select id="estadoCivil" name="estadoCivil" required>
+                <option disabled selected value="">Seleccionar estado civil...</option>
+                <option value="soltero">Soltero / a</option>
+                <option value="casado">Casado / a</option>
+                <option value="divorciado">Divorciado / a</option>
+                <option value="viudo">Viudo / a</option>
+                <option value="union-libre">Unión Libre</option>
+              </select>
+              <span class="material-symbols-outlined select-arrow" aria-hidden="true">expand_more</span>
+            </div>
+          </div>
+
+          <div class="form-field form-field-wide">
+            <label for="email"><span class="material-symbols-outlined" aria-hidden="true">mail</span>Correo Electrónico</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">alternate_email</span>
+              <input id="email" name="email" autocomplete="email" placeholder="usuario@red-aether.io" required type="email">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="password"><span class="material-symbols-outlined" aria-hidden="true">lock</span>Contraseña</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">key</span>
+              <input id="password" name="password" autocomplete="new-password" placeholder="••••••••••••" required type="password">
+              <button class="password-toggle" aria-label="Mostrar contraseña" onclick="togglePasswordVisibility('password', 'eyePass1', this)" type="button">
+                <span class="material-symbols-outlined" id="eyePass1" aria-hidden="true">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="confirmPassword"><span class="material-symbols-outlined" aria-hidden="true">lock_reset</span>Confirmar Contraseña</label>
+            <div class="input-wrap">
+              <span class="material-symbols-outlined input-icon" aria-hidden="true">verified</span>
+              <input id="confirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="••••••••••••" required type="password">
+              <button class="password-toggle" aria-label="Mostrar contraseña" onclick="togglePasswordVisibility('confirmPassword', 'eyePass2', this)" type="button">
+                <span class="material-symbols-outlined" id="eyePass2" aria-hidden="true">visibility</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-message" id="statusMessage" role="status" aria-live="polite" hidden>
+          <span class="material-symbols-outlined" id="statusIcon" aria-hidden="true">check_circle</span>
+          <span id="statusText"></span>
+        </div>
+
+        <div class="form-actions">
+          <button class="primary-button submit-button" type="submit">
+            <span> Registrar </span>
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Tu perfil, en un solo lugar.</span>
+  </footer>
+
+  <script src="script.js" defer></script>
+
+</body>
+</html>
