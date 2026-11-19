@@ -20,6 +20,34 @@ const sendJson = (response, statusCode, data) => {
   response.end(JSON.stringify(data));
 };
 
+const isLocalOrigin = (origin) => {
+  try {
+    const url = new URL(origin);
+    return url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname);
+  } catch {
+    return false;
+  }
+};
+
+const setApiCorsHeaders = (request, response) => {
+  const origin = request.headers.origin;
+
+  if (!origin) {
+    return true;
+  }
+
+  if (!isLocalOrigin(origin)) {
+    sendJson(response, 403, { ok: false, message: "Origen no permitido." });
+    return false;
+  }
+
+  response.setHeader("Access-Control-Allow-Origin", origin);
+  response.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  response.setHeader("Vary", "Origin");
+  return true;
+};
+
 const readJsonBody = async (request) => {
   const chunks = [];
   let totalSize = 0;
@@ -66,20 +94,51 @@ const handleRegistration = async (request, response) => {
     return;
   }
 
-  const emailRegistrado = typeof data.emailRegistrado === "string" ? data.emailRegistrado.trim() : "";
+  const nombre = typeof data.nombre === "string" ? data.nombre.trim() : "";
+  const apellido = typeof data.apellido === "string" ? data.apellido.trim() : "";
+  const edad = Number(data.edad);
+  const fechaNacimiento = typeof data.fechaNacimiento === "string" ? data.fechaNacimiento : "";
+  const genero = typeof data.genero === "string" ? data.genero : "";
+  const estadoCivil = typeof data.estadoCivil === "string" ? data.estadoCivil : "";
+  const email = typeof data.email === "string" ? data.email.trim() : "";
+  const fechaValida = /^\d{4}-\d{2}-\d{2}$/.test(fechaNacimiento)
+    && !Number.isNaN(Date.parse(`${fechaNacimiento}T00:00:00.000Z`))
+    && new Date(`${fechaNacimiento}T00:00:00.000Z`).toISOString().slice(0, 10) === fechaNacimiento
+    && new Date(`${fechaNacimiento}T00:00:00.000Z`) <= new Date();
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailRegistrado)) {
+  if (!nombre || !apellido || !Number.isInteger(edad) || edad < 14 || edad > 120 || !fechaValida) {
+    sendJson(response, 400, { ok: false, message: "Revise el nombre, apellido, edad y fecha de nacimiento." });
+    return;
+  }
+
+  if (!["masculino", "femenino", "otro", "no-decir"].includes(genero)
+    || !["soltero", "casado", "divorciado", "viudo", "union-libre"].includes(estadoCivil)) {
+    sendJson(response, 400, { ok: false, message: "Seleccione opciones válidas para género y estado civil." });
+    return;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     sendJson(response, 400, { ok: false, message: "El correo electrónico no es válido." });
     return;
   }
 
-  sendJson(response, 201, { ok: true, message: "Registro recibido correctamente." });
+  sendJson(response, 201, { ok: true, message: "Datos de registro recibidos correctamente." });
 };
 
 const handleRequest = async (request, response) => {
   const pathname = new URL(request.url, "http://localhost").pathname;
 
   if (pathname === "/api/registro") {
+    if (!setApiCorsHeaders(request, response)) {
+      return;
+    }
+
+    if (request.method === "OPTIONS") {
+      response.writeHead(204);
+      response.end();
+      return;
+    }
+
     if (request.method !== "POST") {
       response.setHeader("Allow", "POST");
       sendJson(response, 405, { ok: false, message: "Método no permitido." });

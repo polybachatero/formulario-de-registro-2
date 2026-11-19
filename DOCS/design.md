@@ -108,3 +108,9 @@ localStorage.
 - [ ] Un registro válido permite acceder a la página de bienvenida.
 - [ ] El botón de regreso vuelve al formulario.
 - [ ] No se guardan contraseñas ni datos sensibles en localStorage.
+
+11. Ejecución y conexión local
+- Iniciar la API y el servidor de archivos desde la carpeta del proyecto con `node server.js`.
+- Abrir `http://127.0.0.1:3000`; el mismo servidor entrega la página y recibe `POST /api/registro`.
+- Si se usa Live Server en el puerto 5501, mantener también `node server.js` en ejecución. La API local admite solicitudes desde `localhost` y `127.0.0.1`.
+- El endpoint valida y recibe los datos del perfil, pero no los guarda en una base de datos. La contraseña nunca se envía al servidor ni se guarda en `localStorage`.

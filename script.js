@@ -10,6 +10,10 @@ const emailInput = document.getElementById("email");
 const statusMessage = document.getElementById("statusMessage");
 const statusIcon = document.getElementById("statusIcon");
 const statusText = document.getElementById("statusText");
+const localHosts = ["localhost", "127.0.0.1"];
+const apiUrl = localHosts.includes(window.location.hostname) && window.location.port !== "3000"
+  ? "http://127.0.0.1:3000/api/registro"
+  : "/api/registro";
 
 const handleSubmit = async (event) => {
   event.preventDefault();
@@ -43,12 +47,21 @@ const handleSubmit = async (event) => {
   }
 
   const emailRegistrado = emailInput.value.trim();
+  const registroUsuario = {
+    nombre: firstNameInput.value.trim(),
+    apellido: lastNameInput.value.trim(),
+    edad: Number(ageInput.value),
+    fechaNacimiento: birthDateInput.value,
+    genero: genderInput.value,
+    estadoCivil: maritalStatusInput.value,
+    email: emailRegistrado
+  };
 
   try {
-    const response = await fetch("/api/registro", {
+    const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ emailRegistrado })
+      body: JSON.stringify(registroUsuario)
     });
     const data = await response.json();
 
@@ -60,7 +73,9 @@ const handleSubmit = async (event) => {
     statusMessage.hidden = false;
     statusMessage.classList.add("is-error");
     statusIcon.textContent = "error";
-    statusText.textContent = "No se pudo enviar el registro. Compruebe la conexión e inténtelo de nuevo.";
+    statusText.textContent = error instanceof TypeError
+      ? "No se pudo conectar con el servidor. Inicie node server.js y vuelva a intentarlo."
+      : error.message;
     return;
   }
 
@@ -69,19 +84,8 @@ const handleSubmit = async (event) => {
   statusIcon.textContent = "check_circle";
   statusText.textContent = "¡Registro completado exitosamente! Redirigiendo a bienvenida...";
 
-  const registroUsuario = {
-    nombre: firstNameInput.value.trim(),
-    apellido: lastNameInput.value.trim(),
-    edad: ageInput.value,
-    fechaNacimiento: birthDateInput.value,
-    genero: genderInput.value,
-    estadoCivil: maritalStatusInput.value,
-    email: emailRegistrado
-  };
-
   try {
     localStorage.setItem("emailRegistrado", emailRegistrado);
-    localStorage.setItem("registroUsuario", JSON.stringify(registroUsuario));
   } catch (error) {
     console.warn("El registro se completó, pero no se pudieron guardar los datos localmente.", error);
   }
