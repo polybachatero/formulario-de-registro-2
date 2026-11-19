@@ -69,6 +69,23 @@ const handleSubmit = async (event) => {
   statusIcon.textContent = "check_circle";
   statusText.textContent = "¡Registro completado exitosamente! Redirigiendo a bienvenida...";
 
+  const registroUsuario = {
+    nombre: firstNameInput.value.trim(),
+    apellido: lastNameInput.value.trim(),
+    edad: ageInput.value,
+    fechaNacimiento: birthDateInput.value,
+    genero: genderInput.value,
+    estadoCivil: maritalStatusInput.value,
+    email: emailRegistrado
+  };
+
+  try {
+    localStorage.setItem("emailRegistrado", emailRegistrado);
+    localStorage.setItem("registroUsuario", JSON.stringify(registroUsuario));
+  } catch (error) {
+    console.warn("El registro se completó, pero no se pudieron guardar los datos localmente.", error);
+  }
+
   window.setTimeout(() => {
     window.location.href = "bienvenida.html";
   }, 1000);
